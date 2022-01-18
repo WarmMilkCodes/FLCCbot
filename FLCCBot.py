@@ -7,21 +7,18 @@ from discord.ext import commands
 import pandas as pd
 import pymongo
 from pymongo import MongoClient
+from pprint import pprint
 import config
 
 # MongoDB Stuff
 
 cluster = MongoClient(config.MongClient)
-
-db = cluster.business
-
-collection = db.userCollection
+db = cluster.flcc
+collection = db.gameResults
 
 # Set Bot Prefix
 bot = commands.Bot(command_prefix = '!', case_insensitive=True)
-
 guild = discord.Guild
-
 
 # Informal Bot Verison
 bot.version = "0.1"
@@ -32,43 +29,22 @@ async def on_ready():
     print(f'{bot.user} is ready.')
     await bot.change_presence(activity=discord.Game(name='United Rogue FLCC Bot'))
 
-# MongoDB Test 
-# Needs a little more work - nearly there (maybe)
+# Result Submission - Courtesy to BrewTangClan for code assistance
 
 
 @bot.command()
-async def result(ctx):
-    global times_used
-    await ctx.send('What round are you submitting?')
+async def submit(ctx, round_number:int, winner:str, loser:str):
+    await ctx.reply("%s wins round %s against %s" % (winner, round_number, loser))
+    await ctx.reply("Sucessfully submitted.")
 
-    def check(msg):
-        return msg.author == ctx.author and msg.channel == ctx.channel and msg.content.lower() in ["1", "2", "3", "4"]
-
-    msg = await bot.wait_for("message", check=check)
-    dict = {}
-    dict['round'] = msg.content.lower()
-    if msg.content.lower() == "1":
-        await ctx.send("You are submitting for Round 1")
-    
-    elif msg.content.lower() == "2":
-        await ctx.send("You are submitting for Round 2")
-        
-    elif msg.content.lower() == "3":
-        await ctx.send("You are submitting for Round 3")
-        
-    elif msg.content.lower() == "4":
-        await ctx.send("You are submitting for Round 4")
-        
-    else:  
-        await ctx.send("You did not submit a valid round.")
-    
-
-
-    dict['losingTeam'] = msg.content.lower()
-    await ctx.send('Losing team - 3 letter abbreviation')
-    collection.insert_one(dict)
-
-
+    dict = []
+    dict = {
+        "round_number":round_number,
+        "winner":winner,
+        "loser":loser
+    }
+    collection.insert_many([dict])
+    pprint('Submission Successful')
 
 
 # Latency Test
