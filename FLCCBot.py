@@ -27,12 +27,13 @@ bot.version = "0.1"
 @bot.event
 async def on_ready():
     print(f'{bot.user} is ready.')
-    await bot.change_presence(activity=discord.Game(name='United Rogue FLCC Bot'))
+    await bot.change_presence(activity=discord.Game(name='Fettuccine Community Cup'))
 
 # Result Submission - Courtesy to BrewTangClan for code assistance
 
 
 @bot.command()
+@commands.has_role('BotApproved')
 async def submit(ctx, round_number:int, winner:str, loser:str):
     await ctx.reply("%s wins round %s against %s" % (winner, round_number, loser))
     await ctx.reply("Sucessfully submitted.")
@@ -45,6 +46,20 @@ async def submit(ctx, round_number:int, winner:str, loser:str):
     }
     collection.insert_many([dict])
     pprint('Submission Successful')
+
+
+# Auto Reply to Direct Messages
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+    if not message.guild:
+        try:
+            await message.channel.send("Message Warm Milk or Brindle directly with any questions you have regarding the Fettuccine Community Cup.")
+        except discord.errors.Forbidden:
+            pass
+    else:
+        pass
 
 
 # Latency Test
@@ -80,10 +95,6 @@ async def on_command_error(ctx,error):
     elif isinstance(error, commands.CheckFailure):
         await ctx.send("You do not have the proper permissions for this command!")
     raise error
-
-
-
-
 
 
 #Bot Token
