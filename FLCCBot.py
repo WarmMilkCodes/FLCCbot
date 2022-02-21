@@ -47,21 +47,6 @@ async def submit(ctx, round_number:int, winner:str, loser:str):
     collection.insert_many([dict])
     pprint('Submission Successful')
 
-
-# Auto Reply to Direct Messages
-@bot.event
-async def on_message(message):
-    if message.author == bot.user:
-        return
-    if not message.guild:
-        try:
-            await message.channel.send("Message Warm Milk or Brindle directly with any questions you have regarding the Fettuccine Community Cup.")
-        except discord.errors.Forbidden:
-            pass
-    else:
-        pass
-
-
 # Latency Test
 @bot.command()
 async def ping(ctx):
