@@ -8,7 +8,7 @@ import pandas as pd
 import pymongo
 from pymongo import MongoClient
 from pprint import pprint
-import config
+from config import bot_token
 
 # MongoDB Stuff
 
@@ -29,8 +29,6 @@ async def on_ready():
     print(f'{bot.user} is ready.')
     await bot.change_presence(activity=discord.Game(name='Fettuccine Community Cup'))
 
-# Result Submission - Courtesy to BrewTangClan for code assistance
-
 
 @bot.command()
 @commands.has_role('BotApproved')
@@ -47,6 +45,15 @@ async def submit(ctx, round_number:int, winner:str, loser:str):
     collection.insert_many([dict])
     pprint('Submission Successful')
 
+#### Add command to mass remove captain roles
+
+
+#### Add command to get captain name from website and give roles if in server
+
+
+#### Add command to vote for All Star (season 13)
+
+
 # Latency Test
 @bot.command()
 async def ping(ctx):
@@ -60,27 +67,5 @@ async def seed(ctx):
     random.shuffle(teams)
     await ctx.send(', '.join(teams))
 
-@bot.event
-async def on_command_error(ctx,error):
-    # Ignore these errors
-    ignored = (commands.CommandNotFound, commands.UserInputError)
-    if isinstance(error, ignored):
-        return
-
-    # Begin Error Handling 
-    if isinstance(error, commands.CommandOnCooldown):
-        m,s = divmod(error.retry_after, 60)
-        h,m = divmod(m, 60)
-        if int(h) == 0 and int(m) == 0:
-            await ctx.send(f'Please wait {int(s)} seconds to use this command!')
-        elif int(h) == 0 and int(m) != 0:
-            await ctx.send(f'Please wait {int(m)} minutes and {int(s)} seconds to use this command!')
-        else:
-            await ctx.send(f'You must wait {int(h)} hours, {int(m)} minutes, and {int(s)} seconds to use this command!')
-    elif isinstance(error, commands.CheckFailure):
-        await ctx.send("You do not have the proper permissions for this command!")
-    raise error
-
-
 #Bot Token
-bot.run = bot.run(config.botToken)
+bot.run = bot.run(config.bot_token)
